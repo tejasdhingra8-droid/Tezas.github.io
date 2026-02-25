@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JEE Tracker | 2026 Mastery</title>
+    
+    <!-- Favicon / Tab Icon -->
+    <link rel="icon" type="image/jpeg" href="logo.jpeg">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
     <style>
@@ -12,6 +16,8 @@
         :root {
             --primary-blue: #3b82f6;
             --bg-dark: #020617;
+            --transition-speed: 0.4s;
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         body {
@@ -20,18 +26,61 @@
             color: #f8fafc;
             overflow-x: hidden;
             margin: 0;
+            scroll-behavior: smooth;
         }
 
+        /* --- Advanced Animations --- */
+        .view-section {
+            transition: opacity var(--transition-speed) var(--ease-out-expo), 
+                        transform var(--transition-speed) var(--ease-out-expo),
+                        visibility var(--transition-speed);
+            position: absolute;
+            width: 100%;
+            min-height: 100vh;
+            top: 0;
+            left: 0;
+            opacity: 1;
+            transform: scale(1);
+            visibility: visible;
+        }
+
+        .hidden-section {
+            opacity: 0;
+            transform: scale(0.98);
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* Staggered entry for list items/cards */
+        .animate-in {
+            animation: slideUp 0.6s var(--ease-out-expo) forwards;
+            opacity: 0;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Hover Glow Effects */
         .glass {
             background: rgba(15, 23, 42, 0.7);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
+        .glass:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.05);
+        }
+
+        /* --- UI Components --- */
         .goal-text.completed {
             text-decoration: line-through;
-            opacity: 0.5;
+            opacity: 0.4;
             color: #94a3b8;
+            transition: all 0.3s ease;
         }
 
         .custom-checkbox {
@@ -41,13 +90,14 @@
             border: 2px solid #334155;
             border-radius: 6px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
         }
 
         .custom-checkbox:checked {
             background-color: var(--primary-blue);
             border-color: var(--primary-blue);
+            transform: scale(1.1);
         }
 
         .custom-checkbox:checked::after {
@@ -61,23 +111,15 @@
             transform: translate(-50%, -50%);
         }
 
+        .tab-btn {
+            transition: all 0.3s var(--ease-out-expo);
+        }
+
         .tab-btn.active {
             background: rgba(59, 130, 246, 0.15);
             color: white;
             box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.4);
-        }
-
-        .view-section {
-            transition: all 0.3s ease-in-out;
-            position: absolute;
-            width: 100%;
-            min-height: 100vh;
-        }
-
-        .hidden-section {
-            display: none !important;
-            opacity: 0;
-            pointer-events: none;
+            transform: translateY(-1px);
         }
 
         .priority-badge-A { background: #ef4444; color: white; }
@@ -98,19 +140,19 @@
             left: 50%;
             bottom: 30px;
             transform: translateX(-50%);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
         }
 
-        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        #toast.show { visibility: visible; animation: fadein 0.5s var(--ease-out-expo), fadeout 0.5s 2.5s forwards; }
+        
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
 
-        footer {
-            margin-top: auto;
-            padding: 2rem;
-            text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            background: rgba(2, 6, 23, 0.8);
-        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #334155; }
     </style>
 </head>
 <body class="bg-[#020617] flex flex-col min-h-screen">
@@ -122,15 +164,15 @@
         <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(#1e3a8a 1px, transparent 1px); background-size: 40px 40px;"></div>
         
         <div class="relative z-10">
-            <div class="mb-8 w-32 h-32 mx-auto rounded-3xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center shadow-2xl overflow-hidden">
+            <div class="mb-8 w-32 h-32 mx-auto rounded-3xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center shadow-2xl overflow-hidden animate-in" style="animation-delay: 0.1s">
                 <img id="main-logo" src="logo.jpeg" alt="Logo" class="w-full h-full object-cover" 
                      onerror="this.style.display='none'; document.getElementById('logo-fallback').classList.remove('hidden');">
                 <div id="logo-fallback" class="hidden"><i data-lucide="graduation-cap" class="w-16 h-16 text-blue-500"></i></div>
             </div>
-            <h1 class="text-6xl md:text-8xl font-black tracking-tighter mb-4 text-white">JEE <span class="text-blue-500">TRACKER</span></h1>
-            <p class="text-slate-400 text-lg mb-10 font-medium">Your Daily Roadmap to JEE 2026 Mastery</p>
+            <h1 class="text-6xl md:text-8xl font-black tracking-tighter mb-4 text-white animate-in" style="animation-delay: 0.2s">JEE <span class="text-blue-500">TRACKER</span></h1>
+            <p class="text-slate-400 text-lg mb-10 font-medium animate-in" style="animation-delay: 0.3s">Your Daily Roadmap to JEE 2026 Mastery</p>
             
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <div class="flex flex-col sm:flex-row gap-4 justify-center animate-in" style="animation-delay: 0.4s">
                 <button onclick="showView('view-tracker')" class="px-10 py-5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-bold transition-all transform hover:scale-105 shadow-xl flex items-center justify-center gap-3">
                     <i data-lucide="layout-list"></i> START TRACKING
                 </button>
@@ -148,19 +190,14 @@
         </button>
         <h2 class="text-4xl font-black text-white mb-12">Select Subject</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
-            <!-- Maths -->
-            <button onclick="openSubjectGoals('math')" class="glass p-12 rounded-3xl group hover:border-blue-500/50 transition-all flex flex-col items-center">
-                <h3 class="text-3xl font-bold text-white tracking-widest">MATHS</h3>
+            <button onclick="openSubjectGoals('math')" class="glass p-12 rounded-3xl group hover:border-blue-500/50 transition-all flex flex-col items-center animate-in" style="animation-delay: 0.1s">
+                <h3 class="text-3xl font-bold text-white tracking-widest group-hover:text-blue-400 transition-colors uppercase">Maths</h3>
             </button>
-            
-            <!-- Physics -->
-            <button onclick="openSubjectGoals('physics')" class="glass p-12 rounded-3xl group hover:border-purple-500/50 transition-all flex flex-col items-center">
-                <h3 class="text-3xl font-bold text-white tracking-widest">PHYSICS</h3>
+            <button onclick="openSubjectGoals('physics')" class="glass p-12 rounded-3xl group hover:border-purple-500/50 transition-all flex flex-col items-center animate-in" style="animation-delay: 0.2s">
+                <h3 class="text-3xl font-bold text-white tracking-widest group-hover:text-purple-400 transition-colors uppercase">Physics</h3>
             </button>
-            
-            <!-- Chemistry -->
-            <button onclick="openSubjectGoals('chemistry')" class="glass p-12 rounded-3xl group hover:border-emerald-500/50 transition-all flex flex-col items-center">
-                <h3 class="text-3xl font-bold text-white tracking-widest">CHEMISTRY</h3>
+            <button onclick="openSubjectGoals('chemistry')" class="glass p-12 rounded-3xl group hover:border-emerald-500/50 transition-all flex flex-col items-center animate-in" style="animation-delay: 0.3s">
+                <h3 class="text-3xl font-bold text-white tracking-widest group-hover:text-emerald-400 transition-colors uppercase">Chemistry</h3>
             </button>
         </div>
     </div>
@@ -171,7 +208,7 @@
             <i data-lucide="arrow-left"></i> BACK
         </button>
         
-        <div class="w-full max-w-3xl glass p-8 rounded-[2.5rem]">
+        <div class="w-full max-w-3xl glass p-8 rounded-[2.5rem] animate-in">
             <div class="mb-8">
                 <h2 id="current-subject-title" class="text-4xl font-black text-white uppercase tracking-tighter"></h2>
                 <p class="text-slate-500 text-sm font-bold">Daily Progress Tracker</p>
@@ -204,7 +241,7 @@
                 <div class="bg-blue-600/10 px-5 py-2 rounded-xl border border-blue-500/20 text-white font-bold"><span id="overall-percentage">0%</span> Complete</div>
             </div>
         </nav>
-        <main class="max-w-7xl mx-auto px-4 mt-8 pb-10">
+        <main class="max-w-7xl mx-auto px-4 mt-8 pb-10 animate-in">
             <div class="glass rounded-[2rem] overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-left">
                 <thead><tr class="bg-slate-900/50 text-slate-400 text-[10px] uppercase tracking-widest border-b border-white/5">
                     <th class="p-6">Chapter Name</th><th class="p-6 text-center">Theory</th><th class="p-6 text-center">2025</th><th class="p-6 text-center">2024</th><th class="p-6 text-center">2023</th><th class="p-6 text-center">2022</th><th class="p-6 text-center">Booster</th>
@@ -236,6 +273,12 @@
             const view = document.getElementById(viewId);
             if (view) {
                 view.classList.remove('hidden-section');
+                const anims = view.querySelectorAll('.animate-in');
+                anims.forEach((el, idx) => {
+                    el.style.animation = 'none';
+                    el.offsetHeight;
+                    el.style.animation = null;
+                });
                 if(viewId === 'view-tracker') renderTable();
             }
         }
@@ -259,15 +302,16 @@
             const list = document.getElementById('subject-goals-list');
             if (!list) return;
             list.innerHTML = '';
-            goalsData[activeSubject].forEach(goal => {
+            goalsData[activeSubject].forEach((goal, idx) => {
                 const div = document.createElement('div');
-                div.className = 'flex items-center justify-between bg-white/[0.03] p-4 rounded-2xl border border-white/5';
+                div.className = 'flex items-center justify-between bg-white/[0.03] p-4 rounded-2xl border border-white/5 animate-in';
+                div.style.animationDelay = `${idx * 0.05}s`;
                 div.innerHTML = `
                     <div class="flex items-center gap-4">
                         <input type="checkbox" ${goal.completed ? 'checked' : ''} onchange="toggleGoal(${goal.id})" class="custom-checkbox">
                         <span class="goal-text font-medium ${goal.completed ? 'completed' : 'text-slate-200'}">${goal.text}</span>
                     </div>
-                    <button onclick="deleteGoal(${goal.id})" class="text-slate-600 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`;
+                    <button onclick="deleteGoal(${goal.id})" class="text-slate-600 hover:text-red-400 p-2 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`;
                 list.appendChild(div);
             });
             lucide.createIcons();
@@ -286,11 +330,19 @@
         function saveGoals() { localStorage.setItem('jee_2026_goals', JSON.stringify(goalsData)); }
 
         function switchTab(tab) {
-            currentTab = tab;
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            const activeBtn = document.getElementById(`tab-${tab}`);
-            if (activeBtn) activeBtn.classList.add('active');
-            renderTable();
+            if (currentTab === tab) return;
+            const main = document.querySelector('#view-tracker main');
+            main.style.opacity = '0';
+            main.style.transform = 'translateY(10px)';
+            setTimeout(() => {
+                currentTab = tab;
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                const activeBtn = document.getElementById(`tab-${tab}`);
+                if (activeBtn) activeBtn.classList.add('active');
+                renderTable();
+                main.style.opacity = '1';
+                main.style.transform = 'translateY(0)';
+            }, 200);
         }
 
         function renderTable() {
@@ -298,12 +350,10 @@
             if (!tbody) return;
             tbody.innerHTML = '';
             const cols = ['theory', '2025', '2024', '2023', '2022', 'booster'];
-            
             if (!data[currentTab]) return;
-
             data[currentTab].forEach((ch, i) => {
                 const tr = document.createElement('tr');
-                tr.className = 'border-b border-white/5 hover:bg-white/[0.02]';
+                tr.className = 'border-b border-white/5 hover:bg-white/[0.02] transition-colors';
                 tr.innerHTML = `<td class="p-6"><div class="flex items-center gap-3">
                     <span class="text-[9px] font-black px-2 py-0.5 rounded priority-badge-${ch.p}">P-${ch.p}</span>
                     <span class="font-bold text-slate-200">${ch.name}</span></div></td>
@@ -328,21 +378,35 @@
                 total++; if(userData[`${s}-${i}-${c}`]) done++;
             })));
             const perc = document.getElementById('overall-percentage');
-            if (perc) perc.innerText = `${Math.round((done/total)*100)}%`;
+            if (perc) {
+                const currentVal = parseInt(perc.innerText);
+                const targetVal = Math.round((done/total)*100);
+                animateNumber(perc, currentVal || 0, targetVal, 1000);
+            }
+        }
+
+        function animateNumber(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerHTML = Math.floor(progress * (end - start) + start) + "%";
+                if (progress < 1) window.requestAnimationFrame(step);
+            };
+            window.requestAnimationFrame(step);
         }
 
         function showToast(m) {
             const t = document.getElementById("toast");
             if (!t) return;
             t.innerText = m; t.classList.add("show");
-            setTimeout(() => t.classList.remove("show"), 2000);
+            setTimeout(() => t.classList.remove("show"), 2500);
         }
 
         window.onload = () => {
             lucide.createIcons();
-            if (!document.getElementById('view-tracker').classList.contains('hidden-section')) {
-                renderTable();
-            }
+            if (!document.getElementById('view-tracker').classList.contains('hidden-section')) renderTable();
         };
     </script>
 </body>
+</html>
