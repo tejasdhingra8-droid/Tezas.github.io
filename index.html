@@ -68,7 +68,7 @@
         }
 
         .view-section {
-            transition: all 0.5s ease-in-out;
+            transition: all 0.3s ease-in-out;
             position: absolute;
             width: 100%;
             min-height: 100vh;
@@ -77,30 +77,13 @@
         .hidden-section {
             display: none !important;
             opacity: 0;
+            pointer-events: none;
         }
 
         .priority-badge-A { background: #ef4444; color: white; }
         .priority-badge-B { background: #f59e0b; color: white; }
         .priority-badge-C { background: #10b981; color: white; }
         .priority-badge-D { background: #6366f1; color: white; }
-
-        .subject-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 4px;
-        }
-
-        .nav-icon-small {
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            border-radius: 4px;
-            background: rgba(255,255,255,0.05);
-        }
 
         #toast {
             visibility: hidden;
@@ -120,9 +103,17 @@
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+
+        footer {
+            margin-top: auto;
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(2, 6, 23, 0.8);
+        }
     </style>
 </head>
-<body class="bg-[#020617]">
+<body class="bg-[#020617] flex flex-col min-h-screen">
 
     <div id="toast">Saved!</div>
 
@@ -132,8 +123,9 @@
         
         <div class="relative z-10">
             <div class="mb-8 w-32 h-32 mx-auto rounded-3xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center shadow-2xl overflow-hidden">
-                <img id="main-logo" src="logo.jpeg?v=1" alt="Logo" class="w-full h-full object-cover hidden" onload="this.classList.remove('hidden'); document.getElementById('logo-fallback').classList.add('hidden');" onerror="this.classList.add('hidden'); document.getElementById('logo-fallback').classList.remove('hidden');">
-                <div id="logo-fallback" class=""><i data-lucide="graduation-cap" class="w-16 h-16 text-blue-500"></i></div>
+                <img id="main-logo" src="logo.jpeg" alt="Logo" class="w-full h-full object-cover" 
+                     onerror="this.style.display='none'; document.getElementById('logo-fallback').classList.remove('hidden');">
+                <div id="logo-fallback" class="hidden"><i data-lucide="graduation-cap" class="w-16 h-16 text-blue-500"></i></div>
             </div>
             <h1 class="text-6xl md:text-8xl font-black tracking-tighter mb-4 text-white">JEE <span class="text-blue-500">TRACKER</span></h1>
             <p class="text-slate-400 text-lg mb-10 font-medium">Your Daily Roadmap to JEE 2026 Mastery</p>
@@ -158,29 +150,17 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
             <!-- Maths -->
             <button onclick="openSubjectGoals('math')" class="glass p-12 rounded-3xl group hover:border-blue-500/50 transition-all flex flex-col items-center">
-                <div class="relative w-16 h-16 mb-6 rounded-xl overflow-hidden bg-white/5">
-                    <img src="maths.jpeg?v=1" class="w-full h-full object-cover hidden" onload="this.classList.remove('hidden'); this.nextElementSibling.classList.add('hidden')" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden')">
-                    <i data-lucide="binary" class="w-16 h-16 text-blue-500 group-hover:scale-110 transition-transform"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-white">MATHS</h3>
+                <h3 class="text-3xl font-bold text-white tracking-widest">MATHS</h3>
             </button>
             
             <!-- Physics -->
             <button onclick="openSubjectGoals('physics')" class="glass p-12 rounded-3xl group hover:border-purple-500/50 transition-all flex flex-col items-center">
-                <div class="relative w-16 h-16 mb-6 rounded-xl overflow-hidden bg-white/5">
-                    <img src="physics.jpeg?v=1" class="w-full h-full object-cover hidden" onload="this.classList.remove('hidden'); this.nextElementSibling.classList.add('hidden')" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden')">
-                    <i data-lucide="atom" class="w-16 h-16 text-purple-500 group-hover:scale-110 transition-transform"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-white">PHYSICS</h3>
+                <h3 class="text-3xl font-bold text-white tracking-widest">PHYSICS</h3>
             </button>
             
             <!-- Chemistry -->
             <button onclick="openSubjectGoals('chemistry')" class="glass p-12 rounded-3xl group hover:border-emerald-500/50 transition-all flex flex-col items-center">
-                <div class="relative w-16 h-16 mb-6 rounded-xl overflow-hidden bg-white/5">
-                    <img src="chemistry.jpeg?v=1" class="w-full h-full object-cover hidden" onload="this.classList.remove('hidden'); this.nextElementSibling.classList.add('hidden')" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden')">
-                    <i data-lucide="beaker" class="w-16 h-16 text-emerald-500 group-hover:scale-110 transition-transform"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-white">CHEMISTRY</h3>
+                <h3 class="text-3xl font-bold text-white tracking-widest">CHEMISTRY</h3>
             </button>
         </div>
     </div>
@@ -192,12 +172,9 @@
         </button>
         
         <div class="w-full max-w-3xl glass p-8 rounded-[2.5rem]">
-            <div class="flex items-center gap-4 mb-8">
-                <div id="subject-icon-box" class="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center overflow-hidden"></div>
-                <div>
-                    <h2 id="current-subject-title" class="text-3xl font-black text-white uppercase tracking-tight"></h2>
-                    <p class="text-slate-500 text-sm font-bold">Daily Progress</p>
-                </div>
+            <div class="mb-8">
+                <h2 id="current-subject-title" class="text-4xl font-black text-white uppercase tracking-tighter"></h2>
+                <p class="text-slate-500 text-sm font-bold">Daily Progress Tracker</p>
             </div>
 
             <div class="relative mb-8">
@@ -217,38 +194,17 @@
                     <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center group-hover:bg-blue-500 transition-colors">
                         <i data-lucide="home" class="w-5 h-5 text-white"></i>
                     </div>
-                    <span class="text-xl font-bold tracking-tight text-white">JEE Tracker</span>
+                    <span class="text-xl font-bold tracking-tight text-white uppercase">JEE 2026</span>
                 </button>
                 <div class="flex gap-1 p-1 bg-slate-900/80 rounded-2xl border border-white/5">
-                    <!-- Math Nav -->
-                    <button onclick="switchTab('Math')" id="tab-Math" class="tab-btn active px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2">
-                        <div class="nav-icon-small">
-                            <img src="maths.jpeg?v=1" class="subject-img hidden" onload="this.classList.remove('hidden'); this.nextElementSibling.classList.add('hidden')" onerror="this.classList.add('hidden');">
-                            <i data-lucide="binary" class="w-4 h-4 text-blue-500"></i>
-                        </div>
-                        Math
-                    </button>
-                    <!-- Physics Nav -->
-                    <button onclick="switchTab('Physics')" id="tab-Physics" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2">
-                        <div class="nav-icon-small">
-                            <img src="physics.jpeg?v=1" class="subject-img hidden" onload="this.classList.remove('hidden'); this.nextElementSibling.classList.add('hidden')" onerror="this.classList.add('hidden');">
-                            <i data-lucide="atom" class="w-4 h-4 text-purple-500"></i>
-                        </div>
-                        Physics
-                    </button>
-                    <!-- Chem Nav -->
-                    <button onclick="switchTab('Chemistry')" id="tab-Chemistry" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2">
-                        <div class="nav-icon-small">
-                            <img src="chemistry.jpeg?v=1" class="subject-img hidden" onload="this.classList.remove('hidden'); this.nextElementSibling.classList.add('hidden')" onerror="this.classList.add('hidden');">
-                            <i data-lucide="beaker" class="w-4 h-4 text-emerald-500"></i>
-                        </div>
-                        Chem
-                    </button>
+                    <button onclick="switchTab('Math')" id="tab-Math" class="tab-btn active px-6 py-2.5 rounded-xl text-sm font-bold">Math</button>
+                    <button onclick="switchTab('Physics')" id="tab-Physics" class="tab-btn px-6 py-2.5 rounded-xl text-sm font-bold">Physics</button>
+                    <button onclick="switchTab('Chemistry')" id="tab-Chemistry" class="tab-btn px-6 py-2.5 rounded-xl text-sm font-bold">Chem</button>
                 </div>
                 <div class="bg-blue-600/10 px-5 py-2 rounded-xl border border-blue-500/20 text-white font-bold"><span id="overall-percentage">0%</span> Complete</div>
             </div>
         </nav>
-        <main class="max-w-7xl mx-auto px-4 mt-8 pb-20">
+        <main class="max-w-7xl mx-auto px-4 mt-8 pb-10">
             <div class="glass rounded-[2rem] overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-left">
                 <thead><tr class="bg-slate-900/50 text-slate-400 text-[10px] uppercase tracking-widest border-b border-white/5">
                     <th class="p-6">Chapter Name</th><th class="p-6 text-center">Theory</th><th class="p-6 text-center">2025</th><th class="p-6 text-center">2024</th><th class="p-6 text-center">2023</th><th class="p-6 text-center">2022</th><th class="p-6 text-center">Booster</th>
@@ -256,6 +212,11 @@
                 <tbody id="tracker-body"></tbody>
             </table></div></div>
         </main>
+        
+        <footer class="mt-10 mb-20 text-slate-500">
+            <p class="text-lg font-bold tracking-widest">TEJAS DHINGRA</p>
+            <p class="text-[10px] uppercase opacity-50">JEE 2026 Preparation Portal</p>
+        </footer>
     </div>
 
     <script>
@@ -269,32 +230,21 @@
         let activeSubject = null;
         let userData = JSON.parse(localStorage.getItem('jee_2026_data')) || {};
         let goalsData = JSON.parse(localStorage.getItem('jee_2026_goals')) || { math: [], physics: [], chemistry: [] };
-        let lastReset = localStorage.getItem('jee_last_reset') || Date.now();
 
         function showView(viewId) {
             document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden-section'));
-            document.getElementById(viewId).classList.remove('hidden-section');
-            if(viewId === 'view-tracker') renderTable();
+            const view = document.getElementById(viewId);
+            if (view) {
+                view.classList.remove('hidden-section');
+                if(viewId === 'view-tracker') renderTable();
+            }
         }
 
         function openSubjectGoals(subject) {
             activeSubject = subject;
             document.getElementById('current-subject-title').innerText = subject;
-            const iconBox = document.getElementById('subject-icon-box');
-            
-            const imgPath = subject === 'math' ? 'maths.jpeg' : `${subject}.jpeg`;
-            const lucideIcons = { math: 'binary', physics: 'atom', chemistry: 'beaker' };
-            const colors = { math: 'text-blue-500', physics: 'text-purple-500', chemistry: 'text-emerald-500' };
-
-            iconBox.innerHTML = `
-                <img src="${imgPath}?v=${Date.now()}" class="w-full h-full object-cover hidden" 
-                    onload="this.classList.remove('hidden')" 
-                    onerror="this.parentElement.innerHTML = '<i data-lucide=\\'${lucideIcons[subject]}\\' class=\\'w-8 h-8 ${colors[subject]}\\'></i>'; lucide.createIcons();">
-            `;
-            
             showView('view-subject-goals');
             renderGoals();
-            lucide.createIcons();
         }
 
         document.getElementById('goal-input').addEventListener('keypress', (e) => {
@@ -307,6 +257,7 @@
 
         function renderGoals() {
             const list = document.getElementById('subject-goals-list');
+            if (!list) return;
             list.innerHTML = '';
             goalsData[activeSubject].forEach(goal => {
                 const div = document.createElement('div');
@@ -337,14 +288,19 @@
         function switchTab(tab) {
             currentTab = tab;
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`tab-${tab}`).classList.add('active');
+            const activeBtn = document.getElementById(`tab-${tab}`);
+            if (activeBtn) activeBtn.classList.add('active');
             renderTable();
         }
 
         function renderTable() {
             const tbody = document.getElementById('tracker-body');
+            if (!tbody) return;
             tbody.innerHTML = '';
             const cols = ['theory', '2025', '2024', '2023', '2022', 'booster'];
+            
+            if (!data[currentTab]) return;
+
             data[currentTab].forEach((ch, i) => {
                 const tr = document.createElement('tr');
                 tr.className = 'border-b border-white/5 hover:bg-white/[0.02]';
@@ -363,7 +319,7 @@
             userData[`${sub}-${idx}-${col}`] = !userData[`${sub}-${idx}-${col}`];
             localStorage.setItem('jee_2026_data', JSON.stringify(userData));
             updateProgress();
-            showToast("Saved!");
+            showToast("Progress Saved!");
         }
 
         function updateProgress() {
@@ -371,23 +327,22 @@
             Object.keys(data).forEach(s => data[s].forEach((_, i) => ['theory', '2025', '2024', '2023', '2022', 'booster'].forEach(c => {
                 total++; if(userData[`${s}-${i}-${c}`]) done++;
             })));
-            document.getElementById('overall-percentage').innerText = `${Math.round((done/total)*100)}%`;
+            const perc = document.getElementById('overall-percentage');
+            if (perc) perc.innerText = `${Math.round((done/total)*100)}%`;
         }
 
         function showToast(m) {
             const t = document.getElementById("toast");
-            t.innerText = m; t.className = "show";
-            setTimeout(() => t.className = "", 2000);
+            if (!t) return;
+            t.innerText = m; t.classList.add("show");
+            setTimeout(() => t.classList.remove("show"), 2000);
         }
 
         window.onload = () => {
             lucide.createIcons();
-            // Force refresh images by appending timestamp
-            document.querySelectorAll('img').forEach(img => {
-                const base = img.src.split('?')[0];
-                img.src = `${base}?v=${Date.now()}`;
-            });
+            if (!document.getElementById('view-tracker').classList.contains('hidden-section')) {
+                renderTable();
+            }
         };
     </script>
 </body>
-</html>
