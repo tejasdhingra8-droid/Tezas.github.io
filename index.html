@@ -92,13 +92,14 @@
         }
 
         .nav-icon-small {
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
             border-radius: 4px;
+            background: rgba(255,255,255,0.05);
         }
 
         #toast {
@@ -131,7 +132,7 @@
         
         <div class="relative z-10">
             <div class="mb-8 w-32 h-32 mx-auto rounded-3xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center shadow-2xl overflow-hidden">
-                <img id="main-logo" src="logo.jpeg" alt="Logo" class="w-full h-full object-cover hidden" onload="this.classList.remove('hidden'); document.getElementById('logo-fallback').classList.add('hidden');" onerror="this.classList.add('hidden'); document.getElementById('logo-fallback').classList.remove('hidden');">
+                <img id="main-logo" src="logo.jpeg?v=1" alt="Logo" class="w-full h-full object-cover hidden" onload="this.classList.remove('hidden'); document.getElementById('logo-fallback').classList.add('hidden');" onerror="this.classList.add('hidden'); document.getElementById('logo-fallback').classList.remove('hidden');">
                 <div id="logo-fallback" class=""><i data-lucide="graduation-cap" class="w-16 h-16 text-blue-500"></i></div>
             </div>
             <h1 class="text-6xl md:text-8xl font-black tracking-tighter mb-4 text-white">JEE <span class="text-blue-500">TRACKER</span></h1>
@@ -148,35 +149,35 @@
         </div>
     </div>
 
-    <!-- 2. GOALS MENU (Subject Selection) -->
+    <!-- 2. GOALS MENU -->
     <div id="view-goals-menu" class="view-section hidden-section flex flex-col items-center justify-center px-6">
         <button onclick="showView('view-landing')" class="absolute top-10 left-10 flex items-center gap-2 text-slate-400 hover:text-white transition-colors font-bold">
             <i data-lucide="arrow-left"></i> BACK
         </button>
         <h2 class="text-4xl font-black text-white mb-12">Select Subject</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
-            <!-- Maths Button -->
+            <!-- Maths -->
             <button onclick="openSubjectGoals('math')" class="glass p-12 rounded-3xl group hover:border-blue-500/50 transition-all flex flex-col items-center">
-                <div class="relative w-16 h-16 mb-6">
-                    <img src="maths.jpeg" alt="Math" class="w-full h-full object-cover rounded-xl absolute inset-0 hidden" onload="this.classList.remove('hidden'); this.nextElementSibling.classList.add('hidden')" onerror="this.classList.add('hidden');">
+                <div class="relative w-16 h-16 mb-6 rounded-xl overflow-hidden bg-white/5">
+                    <img src="maths.jpeg?v=1" class="w-full h-full object-cover hidden" onload="this.classList.remove('hidden'); this.nextElementSibling.classList.add('hidden')" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden')">
                     <i data-lucide="binary" class="w-16 h-16 text-blue-500 group-hover:scale-110 transition-transform"></i>
                 </div>
                 <h3 class="text-2xl font-bold text-white">MATHS</h3>
             </button>
             
-            <!-- Physics Button -->
+            <!-- Physics -->
             <button onclick="openSubjectGoals('physics')" class="glass p-12 rounded-3xl group hover:border-purple-500/50 transition-all flex flex-col items-center">
-                <div class="relative w-16 h-16 mb-6">
-                    <img src="physics.jpeg" alt="Physics" class="w-full h-full object-cover rounded-xl absolute inset-0 hidden" onload="this.classList.remove('hidden'); this.nextElementSibling.classList.add('hidden')" onerror="this.classList.add('hidden');">
+                <div class="relative w-16 h-16 mb-6 rounded-xl overflow-hidden bg-white/5">
+                    <img src="physics.jpeg?v=1" class="w-full h-full object-cover hidden" onload="this.classList.remove('hidden'); this.nextElementSibling.classList.add('hidden')" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden')">
                     <i data-lucide="atom" class="w-16 h-16 text-purple-500 group-hover:scale-110 transition-transform"></i>
                 </div>
                 <h3 class="text-2xl font-bold text-white">PHYSICS</h3>
             </button>
             
-            <!-- Chemistry Button -->
+            <!-- Chemistry -->
             <button onclick="openSubjectGoals('chemistry')" class="glass p-12 rounded-3xl group hover:border-emerald-500/50 transition-all flex flex-col items-center">
-                <div class="relative w-16 h-16 mb-6">
-                    <img src="chemistry.jpeg" alt="Chemistry" class="w-full h-full object-cover rounded-xl absolute inset-0 hidden" onload="this.classList.remove('hidden'); this.nextElementSibling.classList.add('hidden')" onerror="this.classList.add('hidden');">
+                <div class="relative w-16 h-16 mb-6 rounded-xl overflow-hidden bg-white/5">
+                    <img src="chemistry.jpeg?v=1" class="w-full h-full object-cover hidden" onload="this.classList.remove('hidden'); this.nextElementSibling.classList.add('hidden')" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden')">
                     <i data-lucide="beaker" class="w-16 h-16 text-emerald-500 group-hover:scale-110 transition-transform"></i>
                 </div>
                 <h3 class="text-2xl font-bold text-white">CHEMISTRY</h3>
@@ -202,14 +203,13 @@
             <div class="relative mb-8">
                 <input type="text" id="goal-input" placeholder="Type a goal and press Enter..." 
                     class="w-full bg-slate-900 border border-white/10 rounded-2xl px-6 py-5 text-lg focus:outline-none focus:border-blue-500/50 transition-all shadow-inner">
-                <div class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-600"><i data-lucide="plus"></i></div>
             </div>
 
             <div id="subject-goals-list" class="space-y-3"></div>
         </div>
     </div>
 
-    <!-- 4. TRACKER (Table View) -->
+    <!-- 4. TRACKER -->
     <div id="view-tracker" class="view-section hidden-section">
         <nav class="sticky top-0 z-40 glass border-b border-white/5 px-4 py-4">
             <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
@@ -223,7 +223,7 @@
                     <!-- Math Nav -->
                     <button onclick="switchTab('Math')" id="tab-Math" class="tab-btn active px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2">
                         <div class="nav-icon-small">
-                            <img src="maths.jpeg" class="subject-img hidden" onload="this.classList.remove('hidden'); this.nextElementSibling.classList.add('hidden')" onerror="this.classList.add('hidden');">
+                            <img src="maths.jpeg?v=1" class="subject-img hidden" onload="this.classList.remove('hidden'); this.nextElementSibling.classList.add('hidden')" onerror="this.classList.add('hidden');">
                             <i data-lucide="binary" class="w-4 h-4 text-blue-500"></i>
                         </div>
                         Math
@@ -231,7 +231,7 @@
                     <!-- Physics Nav -->
                     <button onclick="switchTab('Physics')" id="tab-Physics" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2">
                         <div class="nav-icon-small">
-                            <img src="physics.jpeg" class="subject-img hidden" onload="this.classList.remove('hidden'); this.nextElementSibling.classList.add('hidden')" onerror="this.classList.add('hidden');">
+                            <img src="physics.jpeg?v=1" class="subject-img hidden" onload="this.classList.remove('hidden'); this.nextElementSibling.classList.add('hidden')" onerror="this.classList.add('hidden');">
                             <i data-lucide="atom" class="w-4 h-4 text-purple-500"></i>
                         </div>
                         Physics
@@ -239,7 +239,7 @@
                     <!-- Chem Nav -->
                     <button onclick="switchTab('Chemistry')" id="tab-Chemistry" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2">
                         <div class="nav-icon-small">
-                            <img src="chemistry.jpeg" class="subject-img hidden" onload="this.classList.remove('hidden'); this.nextElementSibling.classList.add('hidden')" onerror="this.classList.add('hidden');">
+                            <img src="chemistry.jpeg?v=1" class="subject-img hidden" onload="this.classList.remove('hidden'); this.nextElementSibling.classList.add('hidden')" onerror="this.classList.add('hidden');">
                             <i data-lucide="beaker" class="w-4 h-4 text-emerald-500"></i>
                         </div>
                         Chem
@@ -271,38 +271,23 @@
         let goalsData = JSON.parse(localStorage.getItem('jee_2026_goals')) || { math: [], physics: [], chemistry: [] };
         let lastReset = localStorage.getItem('jee_last_reset') || Date.now();
 
-        // --- View Navigation ---
         function showView(viewId) {
             document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden-section'));
-            const target = document.getElementById(viewId);
-            target.classList.remove('hidden-section');
+            document.getElementById(viewId).classList.remove('hidden-section');
             if(viewId === 'view-tracker') renderTable();
-        }
-
-        // --- Goals Logic ---
-        function check24HourReset() {
-            const now = Date.now();
-            const oneDay = 24 * 60 * 60 * 1000;
-            if (now - lastReset > oneDay) {
-                goalsData = { math: [], physics: [], chemistry: [] };
-                lastReset = now;
-                localStorage.setItem('jee_2026_goals', JSON.stringify(goalsData));
-                localStorage.setItem('jee_last_reset', lastReset);
-            }
         }
 
         function openSubjectGoals(subject) {
             activeSubject = subject;
-            const title = document.getElementById('current-subject-title');
+            document.getElementById('current-subject-title').innerText = subject;
             const iconBox = document.getElementById('subject-icon-box');
-            title.innerText = subject;
             
             const imgPath = subject === 'math' ? 'maths.jpeg' : `${subject}.jpeg`;
             const lucideIcons = { math: 'binary', physics: 'atom', chemistry: 'beaker' };
             const colors = { math: 'text-blue-500', physics: 'text-purple-500', chemistry: 'text-emerald-500' };
 
             iconBox.innerHTML = `
-                <img src="${imgPath}" class="w-full h-full object-cover hidden" 
+                <img src="${imgPath}?v=${Date.now()}" class="w-full h-full object-cover hidden" 
                     onload="this.classList.remove('hidden')" 
                     onerror="this.parentElement.innerHTML = '<i data-lucide=\\'${lucideIcons[subject]}\\' class=\\'w-8 h-8 ${colors[subject]}\\'></i>'; lucide.createIcons();">
             `;
@@ -316,8 +301,7 @@
             if (e.key === 'Enter' && e.target.value.trim()) {
                 goalsData[activeSubject].push({ id: Date.now(), text: e.target.value.trim(), completed: false });
                 e.target.value = '';
-                saveGoals();
-                renderGoals();
+                saveGoals(); renderGoals();
             }
         });
 
@@ -332,8 +316,7 @@
                         <input type="checkbox" ${goal.completed ? 'checked' : ''} onchange="toggleGoal(${goal.id})" class="custom-checkbox">
                         <span class="goal-text font-medium ${goal.completed ? 'completed' : 'text-slate-200'}">${goal.text}</span>
                     </div>
-                    <button onclick="deleteGoal(${goal.id})" class="text-slate-600 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                `;
+                    <button onclick="deleteGoal(${goal.id})" class="text-slate-600 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`;
                 list.appendChild(div);
             });
             lucide.createIcons();
@@ -351,7 +334,6 @@
 
         function saveGoals() { localStorage.setItem('jee_2026_goals', JSON.stringify(goalsData)); }
 
-        // --- Table Logic ---
         function switchTab(tab) {
             currentTab = tab;
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -400,13 +382,11 @@
 
         window.onload = () => {
             lucide.createIcons();
-            check24HourReset();
-            
-            // Global logo check
-            const img = document.getElementById('main-logo');
-            const test = new Image();
-            test.onload = () => { img.classList.remove('hidden'); document.getElementById('logo-fallback').classList.add('hidden'); };
-            test.src = "logo.jpeg";
+            // Force refresh images by appending timestamp
+            document.querySelectorAll('img').forEach(img => {
+                const base = img.src.split('?')[0];
+                img.src = `${base}?v=${Date.now()}`;
+            });
         };
     </script>
 </body>
