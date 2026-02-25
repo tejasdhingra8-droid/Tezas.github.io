@@ -62,6 +62,16 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Tab Switching Animation */
+        .tab-content-animate {
+            animation: tabFadeIn 0.4s var(--ease-out-expo) forwards;
+        }
+
+        @keyframes tabFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* Hover Glow Effects */
         .glass {
             background: rgba(15, 23, 42, 0.7);
@@ -241,7 +251,7 @@
                 <div class="bg-blue-600/10 px-5 py-2 rounded-xl border border-blue-500/20 text-white font-bold"><span id="overall-percentage">0%</span> Complete</div>
             </div>
         </nav>
-        <main class="max-w-7xl mx-auto px-4 mt-8 pb-10 animate-in">
+        <main id="tracker-main" class="max-w-7xl mx-auto px-4 mt-8 pb-10 animate-in">
             <div class="glass rounded-[2rem] overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-left">
                 <thead><tr class="bg-slate-900/50 text-slate-400 text-[10px] uppercase tracking-widest border-b border-white/5">
                     <th class="p-6">Chapter Name</th><th class="p-6 text-center">Theory</th><th class="p-6 text-center">2025</th><th class="p-6 text-center">2024</th><th class="p-6 text-center">2023</th><th class="p-6 text-center">2022</th><th class="p-6 text-center">Booster</th>
@@ -250,7 +260,7 @@
             </table></div></div>
         </main>
         
-        <footer class="mt-10 mb-20 text-slate-500">
+        <footer class="mt-10 mb-20 text-center text-slate-500">
             <p class="text-lg font-bold tracking-widest">TEJAS DHINGRA</p>
             <p class="text-[10px] uppercase opacity-50">JEE 2026 Preparation Portal</p>
         </footer>
@@ -311,7 +321,9 @@
                         <input type="checkbox" ${goal.completed ? 'checked' : ''} onchange="toggleGoal(${goal.id})" class="custom-checkbox">
                         <span class="goal-text font-medium ${goal.completed ? 'completed' : 'text-slate-200'}">${goal.text}</span>
                     </div>
-                    <button onclick="deleteGoal(${goal.id})" class="text-slate-600 hover:text-red-400 p-2 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`;
+                    <button onclick="deleteGoal(${goal.id})" class="group flex items-center justify-center w-8 h-8 rounded-full hover:bg-red-500/10 transition-all">
+                        <i data-lucide="x" class="w-4 h-4 text-slate-500 group-hover:text-red-400"></i>
+                    </button>`;
                 list.appendChild(div);
             });
             lucide.createIcons();
@@ -331,18 +343,20 @@
 
         function switchTab(tab) {
             if (currentTab === tab) return;
-            const main = document.querySelector('#view-tracker main');
-            main.style.opacity = '0';
-            main.style.transform = 'translateY(10px)';
-            setTimeout(() => {
-                currentTab = tab;
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                const activeBtn = document.getElementById(`tab-${tab}`);
-                if (activeBtn) activeBtn.classList.add('active');
-                renderTable();
-                main.style.opacity = '1';
-                main.style.transform = 'translateY(0)';
-            }, 200);
+            
+            const main = document.getElementById('tracker-main');
+            
+            // Trigger animation
+            main.classList.remove('tab-content-animate');
+            void main.offsetWidth; // Force reflow
+            main.classList.add('tab-content-animate');
+
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            const activeBtn = document.getElementById(`tab-${tab}`);
+            if (activeBtn) activeBtn.classList.add('active');
+            
+            renderTable();
         }
 
         function renderTable() {
