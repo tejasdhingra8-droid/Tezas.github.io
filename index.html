@@ -1,1 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEE 2026 | Mastery Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary-blue: #3b82f6;
+            --bg-dark: #020617;
+        }
 
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-dark);
+            color: #f8fafc;
+            overflow-x: hidden;
+            margin: 0;
+        }
+
+        .glass {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Smooth Tab Transition Animations */
+        #table-wrapper {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chapter-row {
+            opacity: 0;
+            animation: fadeInUp 0.4s ease forwards;
+        }
+
+        /* Checkbox Styling */
+        .custom-checkbox {
+            appearance: none;
+            width: 1.4rem;
+            height: 1.4rem;
+            border: 2px solid #334155;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .custom-checkbox:checked {
+            background-color: var(--primary-blue);
+            border-color: var(--primary-blue);
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .custom-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: bold;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .priority-badge-A { background: #ef4444; color: white; }
+        .priority-badge-B { background: #f59e0b; color: white; }
+        .priority-badge-C { background: #10b981; color: white; }
+        .priority-badge-D { background: #6366f1; color: white; }
+
+        .tab-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .tab-btn.active {
+            background: rgba(59, 130, 246, 0.15);
+            color: white;
+            box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.4);
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: var(--primary-blue);
+            color: #fff;
+            text-align: center;
+            border-radius: 12px;
+            padding: 16px;
+            position: fixed;
+            z-index: 100;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        #toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+    </style>
+</head>
+<body class="no-scrollbar">
+
+    <div id="toast">Progress Saved Locally!</div>
+
+    <!-- Landing Page -->
+    <div id="landing-page" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#020617] text-center px-6 transition-transform duration-1000 ease-in-out">
+        <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#1e3a8a 1px, transparent 1px); background-size: 40px 40px;"></div>
+        <div class="relative z-10 flex flex-col items-center">
+            <div class="mb-8 w-32 h-32 rounded-3xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center shadow-2xl">
+                <i data-lucide="graduation-cap" class="w-16 h-16 text-blue-500"></i>
+            </div>
+            <h1 class="text-6xl md:text-8xl font-black tracking-tighter mb-4 text-white">
+                JEE <span class="text-blue-500">2026</span>
+            </h1>
+            <p class="text-slate-400 text-lg md:text-xl max-w-lg mb-10 font-medium">
+                Mastery Tracker for MathonGo Priority Chapters
+            </p>
+            <button onclick="enterApp()" class="px-12 py-5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-bold transition-all transform hover:scale-105 shadow-xl shadow-blue-600/20 flex items-center gap-3">
+                START TRACKING <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="app-content" class="hidden min-h-screen pb-20 opacity-0 transition-opacity duration-1000">
+        <nav class="sticky top-0 z-40 glass border-b border-white/5 px-4 py-4">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <i data-lucide="target" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <span class="text-xl font-bold tracking-tight">MasteryTracker</span>
+                </div>
+                
+                <div class="flex gap-1 p-1 bg-slate-900/80 rounded-2xl border border-white/5">
+                    <button onclick="switchTab('Math')" id="tab-Math" class="tab-btn active px-6 py-2.5 rounded-xl text-sm font-bold">Math</button>
+                    <button onclick="switchTab('Physics')" id="tab-Physics" class="tab-btn px-6 py-2.5 rounded-xl text-sm font-bold">Physics</button>
+                    <button onclick="switchTab('Chemistry')" id="tab-Chemistry" class="tab-btn px-6 py-2.5 rounded-xl text-sm font-bold">Chemistry</button>
+                </div>
+
+                <div class="bg-blue-600/10 px-5 py-2 rounded-xl border border-blue-500/20">
+                    <span class="text-blue-400 text-sm font-bold">Total Mastery: <span id="overall-percentage" class="text-white ml-1">0%</span></span>
+                </div>
+            </div>
+        </nav>
+
+        <main class="max-w-7xl mx-auto px-4 mt-8">
+            <div class="glass rounded-[2rem] overflow-hidden shadow-2xl">
+                <div class="overflow-x-auto no-scrollbar">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="bg-slate-900/50 text-slate-400 text-[10px] uppercase tracking-widest border-b border-white/5">
+                                <th class="p-6 min-w-[280px]">Chapter Name</th>
+                                <th class="p-6 text-center">Theory</th>
+                                <th class="p-6 text-center">2025</th>
+                                <th class="p-6 text-center">2024</th>
+                                <th class="p-6 text-center">2023</th>
+                                <th class="p-6 text-center">2022</th>
+                                <th class="p-6 text-center">Booster</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tracker-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const data = {
+            Math: [
+                { name: "Three-Dimensional Geometry", p: "A" }, { name: "Sequences and Series", p: "A" }, 
+                { name: "Matrices Determinants", p: "A" }, { name: "Vector Algebra", p: "A" },
+                { name: "Definite Integration", p: "A" }, { name: "Functions", p: "A" },
+                { name: "Binomial Theorem", p: "A" }, { name: "Differential Equations", p: "A" }
+            ],
+            Physics: [
+                { name: "Current Electricity", p: "A" }, { name: "Electrostatics", p: "A" },
+                { name: "Ray Optics", p: "A" }, { name: "Magnetic Effects of Current", p: "A" },
+                { name: "Thermodynamics", p: "A" }, { name: "Dual Nature of Matter", p: "A" }
+            ],
+            Chemistry: [
+                { name: "General Organic Chemistry", p: "A" }, { name: "Coordination Compounds", p: "A" },
+                { name: "Chemical Bonding", p: "A" }, { name: "d and f Block Elements", p: "A" }
+            ]
+        };
+
+        let currentTab = 'Math';
+        let userData = JSON.parse(localStorage.getItem('jee_2026_data')) || {};
+
+        function enterApp() {
+            document.getElementById('landing-page').style.transform = 'translateY(-100%)';
+            document.getElementById('app-content').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('app-content').style.opacity = '1';
+                renderTable();
+            }, 100);
+        }
+
+        function switchTab(tab) {
+            if (currentTab === tab) return;
+            currentTab = tab;
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-${tab}`).classList.add('active');
+            
+            renderTable();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tracker-body');
+            tbody.innerHTML = ''; 
+            
+            const chapters = data[currentTab];
+            const cols = ['theory', '2025', '2024', '2023', '2022', 'booster'];
+
+            chapters.forEach((ch, i) => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-white/5 hover:bg-white/[0.02] transition-colors chapter-row';
+                tr.style.animationDelay = `${i * 0.05}s`;
+                
+                tr.innerHTML = `
+                    <td class="p-6">
+                        <div class="flex items-center gap-3">
+                            <span class="text-[9px] font-black px-2 py-0.5 rounded priority-badge-${ch.p}">P-${ch.p}</span>
+                            <span class="font-bold text-slate-200">${ch.name}</span>
+                        </div>
+                    </td>
+                    ${cols.map(col => `
+                        <td class="p-6 text-center">
+                            <input type="checkbox" class="custom-checkbox" 
+                                ${userData[`${currentTab}-${i}-${col}`] ? 'checked' : ''}
+                                onchange="toggleTask('${currentTab}', ${i}, '${col}')">
+                        </td>
+                    `).join('')}
+                `;
+                tbody.appendChild(tr);
+            });
+            updateOverallProgress();
+        }
+
+        function toggleTask(sub, idx, col) {
+            const key = `${sub}-${idx}-${col}`;
+            userData[key] = !userData[key];
+            localStorage.setItem('jee_2026_data', JSON.stringify(userData));
+            updateOverallProgress();
+            showToast("Progress Saved!");
+        }
+
+        function updateOverallProgress() {
+            let total = 0;
+            let completed = 0;
+            const cols = ['theory', '2025', '2024', '2023', '2022', 'booster'];
+
+            Object.keys(data).forEach(sub => {
+                data[sub].forEach((_, idx) => {
+                    cols.forEach(col => {
+                        total++;
+                        if (userData[`${sub}-${idx}-${col}`]) completed++;
+                    });
+                });
+            });
+
+            const percent = Math.round((completed / total) * 100) || 0;
+            const el = document.getElementById('overall-percentage');
+            if (el) el.innerText = `${percent}%`;
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById("toast");
+            toast.innerText = msg;
+            toast.className = "show";
+            setTimeout(() => { toast.className = ""; }, 2000);
+        }
+
+        // Fix for "lucide is not defined" error: 
+        // Ensure Lucide initializes only after the script is fully loaded.
+        window.addEventListener('load', function() {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+    </script>
+</body>
+</html>
