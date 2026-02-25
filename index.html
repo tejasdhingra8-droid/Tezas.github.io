@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JEE 2026 | Mastery Tracker</title>
+    <title>JEE Tracker | 2026 Mastery</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
     <style>
@@ -28,22 +28,12 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        /* Smooth Tab Transition Animations */
-        #table-wrapper {
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        .goal-text.completed {
+            text-decoration: line-through;
+            opacity: 0.5;
+            color: #94a3b8;
         }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .chapter-row {
-            opacity: 0;
-            animation: fadeInUp 0.4s ease forwards;
-        }
-
-        /* Checkbox Styling */
         .custom-checkbox {
             appearance: none;
             width: 1.4rem;
@@ -53,15 +43,11 @@
             cursor: pointer;
             transition: all 0.2s ease;
             position: relative;
-            display: inline-block;
-            vertical-align: middle;
         }
 
         .custom-checkbox:checked {
             background-color: var(--primary-blue);
             border-color: var(--primary-blue);
-            transform: scale(1.1);
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
         }
 
         .custom-checkbox:checked::after {
@@ -75,24 +61,46 @@
             transform: translate(-50%, -50%);
         }
 
-        .priority-badge-A { background: #ef4444; color: white; }
-        .priority-badge-B { background: #f59e0b; color: white; }
-        .priority-badge-C { background: #10b981; color: white; }
-        .priority-badge-D { background: #6366f1; color: white; }
-
-        .tab-btn {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
-
         .tab-btn.active {
             background: rgba(59, 130, 246, 0.15);
             color: white;
             box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.4);
         }
 
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        
+        .view-section {
+            transition: all 0.5s ease-in-out;
+            position: absolute;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        .hidden-section {
+            display: none !important;
+            opacity: 0;
+        }
+
+        .priority-badge-A { background: #ef4444; color: white; }
+        .priority-badge-B { background: #f59e0b; color: white; }
+        .priority-badge-C { background: #10b981; color: white; }
+        .priority-badge-D { background: #6366f1; color: white; }
+
+        .subject-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .nav-icon-small {
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 4px;
+        }
+
         #toast {
             visibility: hidden;
             min-width: 250px;
@@ -102,204 +110,304 @@
             border-radius: 12px;
             padding: 16px;
             position: fixed;
-            z-index: 100;
+            z-index: 1000;
             left: 50%;
             bottom: 30px;
             transform: translateX(-50%);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
 
-        #toast.show {
-            visibility: visible;
-            animation: fadein 0.5s, fadeout 0.5s 2.5s;
-        }
-
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
     </style>
 </head>
-<body class="no-scrollbar">
+<body class="bg-[#020617]">
 
-    <div id="toast">Progress Saved Locally!</div>
+    <div id="toast">Saved!</div>
 
-    <!-- Landing Page -->
-    <div id="landing-page" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#020617] text-center px-6 transition-transform duration-1000 ease-in-out">
-        <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#1e3a8a 1px, transparent 1px); background-size: 40px 40px;"></div>
-        <div class="relative z-10 flex flex-col items-center">
-            <div class="mb-8 w-32 h-32 rounded-3xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center shadow-2xl">
-                <i data-lucide="graduation-cap" class="w-16 h-16 text-blue-500"></i>
+    <!-- 1. LANDING PAGE -->
+    <div id="view-landing" class="view-section flex flex-col items-center justify-center text-center px-6">
+        <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(#1e3a8a 1px, transparent 1px); background-size: 40px 40px;"></div>
+        
+        <div class="relative z-10">
+            <div class="mb-8 w-32 h-32 mx-auto rounded-3xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center shadow-2xl overflow-hidden">
+                <img id="main-logo" src="logo.jpeg" alt="Logo" class="w-full h-full object-cover hidden" onload="this.classList.remove('hidden'); document.getElementById('logo-fallback').classList.add('hidden');" onerror="this.classList.add('hidden'); document.getElementById('logo-fallback').classList.remove('hidden');">
+                <div id="logo-fallback" class=""><i data-lucide="graduation-cap" class="w-16 h-16 text-blue-500"></i></div>
             </div>
-            <h1 class="text-6xl md:text-8xl font-black tracking-tighter mb-4 text-white">
-                JEE <span class="text-blue-500">2026</span>
-            </h1>
-            <p class="text-slate-400 text-lg md:text-xl max-w-lg mb-10 font-medium">
-                Mastery Tracker for MathonGo Priority Chapters
-            </p>
-            <button onclick="enterApp()" class="px-12 py-5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-bold transition-all transform hover:scale-105 shadow-xl shadow-blue-600/20 flex items-center gap-3">
-                START TRACKING <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            <h1 class="text-6xl md:text-8xl font-black tracking-tighter mb-4 text-white">JEE <span class="text-blue-500">TRACKER</span></h1>
+            <p class="text-slate-400 text-lg mb-10 font-medium">Your Daily Roadmap to JEE 2026 Mastery</p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button onclick="showView('view-tracker')" class="px-10 py-5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-bold transition-all transform hover:scale-105 shadow-xl flex items-center justify-center gap-3">
+                    <i data-lucide="layout-list"></i> START TRACKING
+                </button>
+                <button onclick="showView('view-goals-menu')" class="px-10 py-5 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl font-bold transition-all transform hover:scale-105 shadow-xl flex items-center justify-center gap-3">
+                    <i data-lucide="calendar-check"></i> DAILY GOALS
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. GOALS MENU (Subject Selection) -->
+    <div id="view-goals-menu" class="view-section hidden-section flex flex-col items-center justify-center px-6">
+        <button onclick="showView('view-landing')" class="absolute top-10 left-10 flex items-center gap-2 text-slate-400 hover:text-white transition-colors font-bold">
+            <i data-lucide="arrow-left"></i> BACK
+        </button>
+        <h2 class="text-4xl font-black text-white mb-12">Select Subject</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
+            <!-- Maths Button -->
+            <button onclick="openSubjectGoals('math')" class="glass p-12 rounded-3xl group hover:border-blue-500/50 transition-all flex flex-col items-center">
+                <div class="relative w-16 h-16 mb-6">
+                    <img src="maths.jpeg" alt="Math" class="w-full h-full object-cover rounded-xl absolute inset-0 hidden" onload="this.classList.remove('hidden'); this.nextElementSibling.classList.add('hidden')" onerror="this.classList.add('hidden');">
+                    <i data-lucide="binary" class="w-16 h-16 text-blue-500 group-hover:scale-110 transition-transform"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white">MATHS</h3>
+            </button>
+            
+            <!-- Physics Button -->
+            <button onclick="openSubjectGoals('physics')" class="glass p-12 rounded-3xl group hover:border-purple-500/50 transition-all flex flex-col items-center">
+                <div class="relative w-16 h-16 mb-6">
+                    <img src="physics.jpeg" alt="Physics" class="w-full h-full object-cover rounded-xl absolute inset-0 hidden" onload="this.classList.remove('hidden'); this.nextElementSibling.classList.add('hidden')" onerror="this.classList.add('hidden');">
+                    <i data-lucide="atom" class="w-16 h-16 text-purple-500 group-hover:scale-110 transition-transform"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white">PHYSICS</h3>
+            </button>
+            
+            <!-- Chemistry Button -->
+            <button onclick="openSubjectGoals('chemistry')" class="glass p-12 rounded-3xl group hover:border-emerald-500/50 transition-all flex flex-col items-center">
+                <div class="relative w-16 h-16 mb-6">
+                    <img src="chemistry.jpeg" alt="Chemistry" class="w-full h-full object-cover rounded-xl absolute inset-0 hidden" onload="this.classList.remove('hidden'); this.nextElementSibling.classList.add('hidden')" onerror="this.classList.add('hidden');">
+                    <i data-lucide="beaker" class="w-16 h-16 text-emerald-500 group-hover:scale-110 transition-transform"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white">CHEMISTRY</h3>
             </button>
         </div>
     </div>
 
-    <!-- Main App -->
-    <div id="app-content" class="hidden min-h-screen pb-20 opacity-0 transition-opacity duration-1000">
+    <!-- 3. SUBJECT GOALS EDITOR -->
+    <div id="view-subject-goals" class="view-section hidden-section flex flex-col items-center pt-32 px-6">
+        <button onclick="showView('view-goals-menu')" class="absolute top-10 left-10 flex items-center gap-2 text-slate-400 hover:text-white transition-colors font-bold">
+            <i data-lucide="arrow-left"></i> BACK
+        </button>
+        
+        <div class="w-full max-w-3xl glass p-8 rounded-[2.5rem]">
+            <div class="flex items-center gap-4 mb-8">
+                <div id="subject-icon-box" class="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center overflow-hidden"></div>
+                <div>
+                    <h2 id="current-subject-title" class="text-3xl font-black text-white uppercase tracking-tight"></h2>
+                    <p class="text-slate-500 text-sm font-bold">Daily Progress</p>
+                </div>
+            </div>
+
+            <div class="relative mb-8">
+                <input type="text" id="goal-input" placeholder="Type a goal and press Enter..." 
+                    class="w-full bg-slate-900 border border-white/10 rounded-2xl px-6 py-5 text-lg focus:outline-none focus:border-blue-500/50 transition-all shadow-inner">
+                <div class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-600"><i data-lucide="plus"></i></div>
+            </div>
+
+            <div id="subject-goals-list" class="space-y-3"></div>
+        </div>
+    </div>
+
+    <!-- 4. TRACKER (Table View) -->
+    <div id="view-tracker" class="view-section hidden-section">
         <nav class="sticky top-0 z-40 glass border-b border-white/5 px-4 py-4">
             <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                        <i data-lucide="target" class="w-5 h-5 text-white"></i>
+                <button onclick="showView('view-landing')" class="flex items-center gap-3 group">
+                    <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center group-hover:bg-blue-500 transition-colors">
+                        <i data-lucide="home" class="w-5 h-5 text-white"></i>
                     </div>
-                    <span class="text-xl font-bold tracking-tight">MasteryTracker</span>
-                </div>
-                
+                    <span class="text-xl font-bold tracking-tight text-white">JEE Tracker</span>
+                </button>
                 <div class="flex gap-1 p-1 bg-slate-900/80 rounded-2xl border border-white/5">
-                    <button onclick="switchTab('Math')" id="tab-Math" class="tab-btn active px-6 py-2.5 rounded-xl text-sm font-bold">Math</button>
-                    <button onclick="switchTab('Physics')" id="tab-Physics" class="tab-btn px-6 py-2.5 rounded-xl text-sm font-bold">Physics</button>
-                    <button onclick="switchTab('Chemistry')" id="tab-Chemistry" class="tab-btn px-6 py-2.5 rounded-xl text-sm font-bold">Chemistry</button>
+                    <!-- Math Nav -->
+                    <button onclick="switchTab('Math')" id="tab-Math" class="tab-btn active px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2">
+                        <div class="nav-icon-small">
+                            <img src="maths.jpeg" class="subject-img hidden" onload="this.classList.remove('hidden'); this.nextElementSibling.classList.add('hidden')" onerror="this.classList.add('hidden');">
+                            <i data-lucide="binary" class="w-4 h-4 text-blue-500"></i>
+                        </div>
+                        Math
+                    </button>
+                    <!-- Physics Nav -->
+                    <button onclick="switchTab('Physics')" id="tab-Physics" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2">
+                        <div class="nav-icon-small">
+                            <img src="physics.jpeg" class="subject-img hidden" onload="this.classList.remove('hidden'); this.nextElementSibling.classList.add('hidden')" onerror="this.classList.add('hidden');">
+                            <i data-lucide="atom" class="w-4 h-4 text-purple-500"></i>
+                        </div>
+                        Physics
+                    </button>
+                    <!-- Chem Nav -->
+                    <button onclick="switchTab('Chemistry')" id="tab-Chemistry" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2">
+                        <div class="nav-icon-small">
+                            <img src="chemistry.jpeg" class="subject-img hidden" onload="this.classList.remove('hidden'); this.nextElementSibling.classList.add('hidden')" onerror="this.classList.add('hidden');">
+                            <i data-lucide="beaker" class="w-4 h-4 text-emerald-500"></i>
+                        </div>
+                        Chem
+                    </button>
                 </div>
-
-                <div class="bg-blue-600/10 px-5 py-2 rounded-xl border border-blue-500/20">
-                    <span class="text-blue-400 text-sm font-bold">Total Mastery: <span id="overall-percentage" class="text-white ml-1">0%</span></span>
-                </div>
+                <div class="bg-blue-600/10 px-5 py-2 rounded-xl border border-blue-500/20 text-white font-bold"><span id="overall-percentage">0%</span> Complete</div>
             </div>
         </nav>
-
-        <main class="max-w-7xl mx-auto px-4 mt-8">
-            <div class="glass rounded-[2rem] overflow-hidden shadow-2xl">
-                <div class="overflow-x-auto no-scrollbar">
-                    <table class="w-full text-left">
-                        <thead>
-                            <tr class="bg-slate-900/50 text-slate-400 text-[10px] uppercase tracking-widest border-b border-white/5">
-                                <th class="p-6 min-w-[280px]">Chapter Name</th>
-                                <th class="p-6 text-center">Theory</th>
-                                <th class="p-6 text-center">2025</th>
-                                <th class="p-6 text-center">2024</th>
-                                <th class="p-6 text-center">2023</th>
-                                <th class="p-6 text-center">2022</th>
-                                <th class="p-6 text-center">Booster</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tracker-body"></tbody>
-                    </table>
-                </div>
-            </div>
+        <main class="max-w-7xl mx-auto px-4 mt-8 pb-20">
+            <div class="glass rounded-[2rem] overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-left">
+                <thead><tr class="bg-slate-900/50 text-slate-400 text-[10px] uppercase tracking-widest border-b border-white/5">
+                    <th class="p-6">Chapter Name</th><th class="p-6 text-center">Theory</th><th class="p-6 text-center">2025</th><th class="p-6 text-center">2024</th><th class="p-6 text-center">2023</th><th class="p-6 text-center">2022</th><th class="p-6 text-center">Booster</th>
+                </tr></thead>
+                <tbody id="tracker-body"></tbody>
+            </table></div></div>
         </main>
     </div>
 
     <script>
         const data = {
-            Math: [
-                { name: "Three-Dimensional Geometry", p: "A" }, { name: "Sequences and Series", p: "A" }, 
-                { name: "Matrices Determinants", p: "A" }, { name: "Vector Algebra", p: "A" },
-                { name: "Definite Integration", p: "A" }, { name: "Functions", p: "A" },
-                { name: "Binomial Theorem", p: "A" }, { name: "Differential Equations", p: "A" }
-            ],
-            Physics: [
-                { name: "Current Electricity", p: "A" }, { name: "Electrostatics", p: "A" },
-                { name: "Ray Optics", p: "A" }, { name: "Magnetic Effects of Current", p: "A" },
-                { name: "Thermodynamics", p: "A" }, { name: "Dual Nature of Matter", p: "A" }
-            ],
-            Chemistry: [
-                { name: "General Organic Chemistry", p: "A" }, { name: "Coordination Compounds", p: "A" },
-                { name: "Chemical Bonding", p: "A" }, { name: "d and f Block Elements", p: "A" }
-            ]
+            Math: [{ name: "Three-Dimensional Geometry", p: "A" }, { name: "Sequences and Series", p: "A" }, { name: "Matrices & Determinants", p: "A" }, { name: "Vector Algebra", p: "A" }, { name: "Definite Integration", p: "A" }, { name: "Functions", p: "A" }, { name: "Binomial Theorem", p: "A" }, { name: "Differential Equations", p: "A" }, { name: "Probability", p: "B" }, { name: "Permutation & Combination", p: "B" }, { name: "Straight Lines", p: "B" }, { name: "Area Under Curves", p: "B" }, { name: "Complex Numbers", p: "B" }, { name: "Application of Derivatives", p: "B" }, { name: "Sets and Relations", p: "B" }, { name: "Quadratic Equation", p: "B" }, { name: "Circle", p: "C" }, { name: "Statistics", p: "C" }, { name: "Limits", p: "C" }, { name: "Parabola", p: "C" }, { name: "Hyperbola", p: "C" }, { name: "Continuity & Differentiability", p: "C" }, { name: "Ellipse", p: "C" }, { name: "Inverse Trig Functions", p: "D" }, { name: "Indefinite Integration", p: "D" }, { name: "Trigonometric Equations", p: "D" }, { name: "Differentiation", p: "D" }, { name: "Trig Ratios & Identities", p: "D" }, { name: "Basics of Mathematics", p: "D" }],
+            Physics: [{ name: "Current Electricity", p: "A" }, { name: "Electrostatics", p: "A" }, { name: "Ray Optics", p: "A" }, { name: "Magnetic Effects of Current", p: "A" }, { name: "Thermodynamics", p: "A" }, { name: "Dual Nature of Matter", p: "A" }, { name: "Atomic Physics", p: "A" }, { name: "Rotational Motion", p: "B" }, { name: "Gravitation", p: "B" }, { name: "Properties of Fluids", p: "B" }, { name: "Semiconductors", p: "B" }, { name: "Work Power Energy", p: "B" }, { name: "Units and Dimensions", p: "B" }, { name: "Wave Optics", p: "B" }, { name: "Laws of Motion", p: "B" }, { name: "Motion In One Dimension", p: "B" }, { name: "Alternating Current", p: "C" }, { name: "Capacitance", p: "C" }, { name: "Electromagnetic Induction", p: "C" }, { name: "Nuclear Physics", p: "C" }, { name: "Kinetic Theory of Gases", p: "C" }, { name: "Oscillations", p: "C" }, { name: "Electromagnetic Waves", p: "C" }, { name: "Motion In Two Dimensions", p: "D" }, { name: "Properties of Solids", p: "D" }, { name: "Waves and Sound", p: "D" }, { name: "Mathematics in Physics", p: "D" }, { name: "Center of Mass", p: "D" }, { name: "Thermal Properties", p: "D" }, { name: "Magnetic Properties", p: "D" }, { name: "Experimental Physics", p: "D" }],
+            Chemistry: [{ name: "General Organic Chemistry", p: "A" }, { name: "Coordination Compounds", p: "A" }, { name: "Chemical Bonding", p: "A" }, { name: "d and f Block Elements", p: "A" }, { name: "Thermodynamics (Chem)", p: "A" }, { name: "Electrochemistry", p: "A" }, { name: "Structure of Atom", p: "B" }, { name: "Solutions", p: "B" }, { name: "Hydrocarbons", p: "B" }, { name: "Amines", p: "B" }, { name: "p-Block Elements", p: "B" }, { name: "Chemical Kinetics", p: "B" }, { name: "Biomolecules", p: "B" }, { name: "Mole Concept", p: "C" }, { name: "Aldehydes and Ketones", p: "C" }, { name: "Periodic Table", p: "C" }, { name: "Haloalkanes & Haloarenes", p: "C" }, { name: "Alcohols Phenols Ethers", p: "C" }, { name: "Ionic Equilibrium", p: "D" }, { name: "Redox Reactions", p: "D" }, { name: "Chemical Equilibrium", p: "D" }, { name: "Practical Chemistry", p: "D" }, { name: "Carboxylic Acid Derivatives", p: "D" }]
         };
 
         let currentTab = 'Math';
+        let activeSubject = null;
         let userData = JSON.parse(localStorage.getItem('jee_2026_data')) || {};
+        let goalsData = JSON.parse(localStorage.getItem('jee_2026_goals')) || { math: [], physics: [], chemistry: [] };
+        let lastReset = localStorage.getItem('jee_last_reset') || Date.now();
 
-        function enterApp() {
-            document.getElementById('landing-page').style.transform = 'translateY(-100%)';
-            document.getElementById('app-content').classList.remove('hidden');
-            setTimeout(() => {
-                document.getElementById('app-content').style.opacity = '1';
-                renderTable();
-            }, 100);
+        // --- View Navigation ---
+        function showView(viewId) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden-section'));
+            const target = document.getElementById(viewId);
+            target.classList.remove('hidden-section');
+            if(viewId === 'view-tracker') renderTable();
         }
 
+        // --- Goals Logic ---
+        function check24HourReset() {
+            const now = Date.now();
+            const oneDay = 24 * 60 * 60 * 1000;
+            if (now - lastReset > oneDay) {
+                goalsData = { math: [], physics: [], chemistry: [] };
+                lastReset = now;
+                localStorage.setItem('jee_2026_goals', JSON.stringify(goalsData));
+                localStorage.setItem('jee_last_reset', lastReset);
+            }
+        }
+
+        function openSubjectGoals(subject) {
+            activeSubject = subject;
+            const title = document.getElementById('current-subject-title');
+            const iconBox = document.getElementById('subject-icon-box');
+            title.innerText = subject;
+            
+            const imgPath = subject === 'math' ? 'maths.jpeg' : `${subject}.jpeg`;
+            const lucideIcons = { math: 'binary', physics: 'atom', chemistry: 'beaker' };
+            const colors = { math: 'text-blue-500', physics: 'text-purple-500', chemistry: 'text-emerald-500' };
+
+            iconBox.innerHTML = `
+                <img src="${imgPath}" class="w-full h-full object-cover hidden" 
+                    onload="this.classList.remove('hidden')" 
+                    onerror="this.parentElement.innerHTML = '<i data-lucide=\\'${lucideIcons[subject]}\\' class=\\'w-8 h-8 ${colors[subject]}\\'></i>'; lucide.createIcons();">
+            `;
+            
+            showView('view-subject-goals');
+            renderGoals();
+            lucide.createIcons();
+        }
+
+        document.getElementById('goal-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && e.target.value.trim()) {
+                goalsData[activeSubject].push({ id: Date.now(), text: e.target.value.trim(), completed: false });
+                e.target.value = '';
+                saveGoals();
+                renderGoals();
+            }
+        });
+
+        function renderGoals() {
+            const list = document.getElementById('subject-goals-list');
+            list.innerHTML = '';
+            goalsData[activeSubject].forEach(goal => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between bg-white/[0.03] p-4 rounded-2xl border border-white/5';
+                div.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <input type="checkbox" ${goal.completed ? 'checked' : ''} onchange="toggleGoal(${goal.id})" class="custom-checkbox">
+                        <span class="goal-text font-medium ${goal.completed ? 'completed' : 'text-slate-200'}">${goal.text}</span>
+                    </div>
+                    <button onclick="deleteGoal(${goal.id})" class="text-slate-600 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                `;
+                list.appendChild(div);
+            });
+            lucide.createIcons();
+        }
+
+        function toggleGoal(id) {
+            const goal = goalsData[activeSubject].find(g => g.id === id);
+            if (goal) { goal.completed = !goal.completed; saveGoals(); renderGoals(); }
+        }
+
+        function deleteGoal(id) {
+            goalsData[activeSubject] = goalsData[activeSubject].filter(g => g.id !== id);
+            saveGoals(); renderGoals();
+        }
+
+        function saveGoals() { localStorage.setItem('jee_2026_goals', JSON.stringify(goalsData)); }
+
+        // --- Table Logic ---
         function switchTab(tab) {
-            if (currentTab === tab) return;
             currentTab = tab;
-            
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`tab-${tab}`).classList.add('active');
-            
             renderTable();
         }
 
         function renderTable() {
             const tbody = document.getElementById('tracker-body');
-            tbody.innerHTML = ''; 
-            
-            const chapters = data[currentTab];
+            tbody.innerHTML = '';
             const cols = ['theory', '2025', '2024', '2023', '2022', 'booster'];
-
-            chapters.forEach((ch, i) => {
+            data[currentTab].forEach((ch, i) => {
                 const tr = document.createElement('tr');
-                tr.className = 'border-b border-white/5 hover:bg-white/[0.02] transition-colors chapter-row';
-                tr.style.animationDelay = `${i * 0.05}s`;
-                
-                tr.innerHTML = `
-                    <td class="p-6">
-                        <div class="flex items-center gap-3">
-                            <span class="text-[9px] font-black px-2 py-0.5 rounded priority-badge-${ch.p}">P-${ch.p}</span>
-                            <span class="font-bold text-slate-200">${ch.name}</span>
-                        </div>
-                    </td>
-                    ${cols.map(col => `
-                        <td class="p-6 text-center">
-                            <input type="checkbox" class="custom-checkbox" 
-                                ${userData[`${currentTab}-${i}-${col}`] ? 'checked' : ''}
-                                onchange="toggleTask('${currentTab}', ${i}, '${col}')">
-                        </td>
-                    `).join('')}
-                `;
+                tr.className = 'border-b border-white/5 hover:bg-white/[0.02]';
+                tr.innerHTML = `<td class="p-6"><div class="flex items-center gap-3">
+                    <span class="text-[9px] font-black px-2 py-0.5 rounded priority-badge-${ch.p}">P-${ch.p}</span>
+                    <span class="font-bold text-slate-200">${ch.name}</span></div></td>
+                    ${cols.map(c => `<td class="p-6 text-center">
+                        <input type="checkbox" class="custom-checkbox" ${userData[`${currentTab}-${i}-${c}`] ? 'checked' : ''} 
+                        onchange="toggleTask('${currentTab}', ${i}, '${c}')"></td>`).join('')}`;
                 tbody.appendChild(tr);
             });
-            updateOverallProgress();
+            updateProgress();
         }
 
         function toggleTask(sub, idx, col) {
-            const key = `${sub}-${idx}-${col}`;
-            userData[key] = !userData[key];
+            userData[`${sub}-${idx}-${col}`] = !userData[`${sub}-${idx}-${col}`];
             localStorage.setItem('jee_2026_data', JSON.stringify(userData));
-            updateOverallProgress();
-            showToast("Progress Saved!");
+            updateProgress();
+            showToast("Saved!");
         }
 
-        function updateOverallProgress() {
-            let total = 0;
-            let completed = 0;
-            const cols = ['theory', '2025', '2024', '2023', '2022', 'booster'];
-
-            Object.keys(data).forEach(sub => {
-                data[sub].forEach((_, idx) => {
-                    cols.forEach(col => {
-                        total++;
-                        if (userData[`${sub}-${idx}-${col}`]) completed++;
-                    });
-                });
-            });
-
-            const percent = Math.round((completed / total) * 100) || 0;
-            const el = document.getElementById('overall-percentage');
-            if (el) el.innerText = `${percent}%`;
+        function updateProgress() {
+            let total = 0, done = 0;
+            Object.keys(data).forEach(s => data[s].forEach((_, i) => ['theory', '2025', '2024', '2023', '2022', 'booster'].forEach(c => {
+                total++; if(userData[`${s}-${i}-${c}`]) done++;
+            })));
+            document.getElementById('overall-percentage').innerText = `${Math.round((done/total)*100)}%`;
         }
 
-        function showToast(msg) {
-            const toast = document.getElementById("toast");
-            toast.innerText = msg;
-            toast.className = "show";
-            setTimeout(() => { toast.className = ""; }, 2000);
+        function showToast(m) {
+            const t = document.getElementById("toast");
+            t.innerText = m; t.className = "show";
+            setTimeout(() => t.className = "", 2000);
         }
 
-        // Fix for "lucide is not defined" error: 
-        // Ensure Lucide initializes only after the script is fully loaded.
-        window.addEventListener('load', function() {
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-        });
+        window.onload = () => {
+            lucide.createIcons();
+            check24HourReset();
+            
+            // Global logo check
+            const img = document.getElementById('main-logo');
+            const test = new Image();
+            test.onload = () => { img.classList.remove('hidden'); document.getElementById('logo-fallback').classList.add('hidden'); };
+            test.src = "logo.jpeg";
+        };
     </script>
 </body>
 </html>
